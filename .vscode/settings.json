@@ -1,0 +1,17 @@
+{
+  // Don't auto-diagnose and re-fix generated code after a turn. Each auto-fix
+  // is another billed request that re-sends the conversation as input tokens.
+  "github.copilot.chat.agent.autoFix": false,
+
+  // Cap how many tool-call iterations the agent runs per turn (default 25).
+  // A runaway agent can burn a lot of credits before it stops on its own.
+  "chat.agent.maxRequests": 5,
+
+  // Compress large terminal output before it's sent to the model, instead of
+  // shipping the entire log as input tokens. (Preview)
+  "chat.tools.compressOutput.enabled": true,
+
+  // When the context window fills, summarize the history instead of re-sending
+  // every prior turn verbatim. Keep this on.
+  "github.copilot.chat.summarizeAgentConversationHistory.enabled": true
+}
