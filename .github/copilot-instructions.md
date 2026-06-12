@@ -60,6 +60,7 @@ testpaths = ["test"]
 - Declare an explicit `response_model` on every list endpoint so the OpenAPI schema documents every property.
 - Use `Field(..., description=..., examples=[...])` on model fields so Swagger shows descriptions and examples.
 - Use a shared `httpx.AsyncClient` and apply `REQUEST_TIMEOUT` per request.
+- Ensure the `lifespan` function checks for an already bounded `app.state.client` (such as one injected by your test runner) before initializing a new one. This keeps tests from accidentally wiping mock configurations.
 - Keep route handlers small, constants in `config.py`, and models in `models.py`.
 - Add concise docstrings to route handlers that describe behavior.
 - Use meaningful HTTP status codes for upstream failures and validation problems.
@@ -83,6 +84,15 @@ testpaths = ["test"]
 
 - Write tests for the API behavior described in the prompt.
 - Use `respx.mock` to intercept the upstream API so tests never require real network calls.
+- When testing endpoints with a shared/persistent client in `lifespan`, standard `@respx.mock` decorators can bypass routers. Provide an autouse fixture in the test suite to bind the `respx_mock` transport explicitly:
+  ```python
+  @pytest.fixture(autouse=True)
+  def mock_app_client(respx_mock):
+      client = httpx.AsyncClient(transport=respx.transports.MockTransport(router=respx_mock))
+      app.state.client = client
+      yield
+      app.state.client = None
+  ```
 - Define a sample products fixture that covers every model field.
 - Cover success cases, filtering behavior, upstream failure handling, and HTML/OpenAPI expectations where appropriate.
 - Keep tests focused and readable, using `pytest` conventions.

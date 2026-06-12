@@ -142,6 +142,7 @@ touch .github/copilot-instructions.md
 touch .github/prompts/build-product-proxy-api.prompt.md
 mkdir -p .vscode
 touch .vscode/settings.json
+touch requirements.txt
 code .
 ```
 
