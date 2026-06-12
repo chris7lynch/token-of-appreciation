@@ -78,7 +78,8 @@ The upstream `/products` endpoint returns an array of product objects shaped lik
 
 ### Landing page (`index.html`)
 
-- A header with the title, a theme-toggle button, and endpoint summary cards.
+- A header with the title and a theme-toggle button.
+- A set of working links to the API documentation: the Swagger UI at `/docs` and the raw OpenAPI schema at `/openapi.json`.
 - A "Live Products" section with two toggle buttons (All products / Highly rated), a status line, and an empty grid that JS fills.
 - A footer.
 
