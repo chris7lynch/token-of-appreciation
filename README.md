@@ -88,9 +88,9 @@ We will build a **Product Proxy** API twice and compare the AI credit cost. The 
 
 *Stay on the `main` branch. Use a **Powerful** model. Send these as separate messages, accepting each result before the next.*
 
-1. `Create a Python API. I won't specify the framework right now, but I want to return Fake Store API products.`
+1. `Create a Python API. It should return Fake Store API products from https://fakestoreapi.com/products`
 2. `Add a second endpoint called highly-rated-items that returns only products with more than 100 ratings and a higher rating than 3.0.`
-3. `Let's have a simple chat to create tests for those APIs.`
+3. `Create tests for those APIs.`
 4. `Finally, I want to ensure there is a swagger endpoint exposed to view my new API information.`
 
 **Record your AI credit total now.** Note how each turn re-sent the growing conversation as input, and several replies included long explanations (output).
