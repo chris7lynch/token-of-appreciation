@@ -95,6 +95,7 @@ Use a unique repository name each time so every run starts from a true blank can
 mkdir token-of-appreciation-simple
 cd token-of-appreciation-simple
 git init
+code .
 ```
 
 ### Step 3) Capture starting usage
@@ -129,6 +130,7 @@ mkdir token-of-appreciation-detailed
 cd token-of-appreciation-detailed
 git init
 mkdir -p .github/prompts
+code .
 ```
 
 ### Step 7) Copy settings before the detailed prompt run
