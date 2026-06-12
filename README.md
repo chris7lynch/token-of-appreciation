@@ -28,38 +28,38 @@ You are billed per token, but not all tokens are priced the same. Every interact
 
 ## Module 1: IDE Setup & Optimizations
 
-Before the demo, adjust these VS Code settings so Copilot stops spending tokens on your behalf. Open **Settings (JSON)** with `Cmd+Shift+P` → *Preferences: Open User Settings (JSON)* and add the following:
+Before the demo, adjust these VS Code settings so Copilot stops spending tokens on your behalf. 
+
+### Global vs. Per-Repository Settings
+
+VS Code settings can be applied globally to all your projects (**User Settings**) or to a specific repository (**Workspace Settings**). 
+
+- **In this Lab (Workspace Settings):** This repository ships these efficiency settings in the `[.vscode/settings.json](.vscode/settings.json)` file. Simply opening this folder in VS Code applies them automatically to this project without affecting your other work.
+- **Globally (User Settings):** If you want these token-saving settings applied to *all* your projects, open the Command Palette (`Cmd+Shift+P`) → *Preferences: Open User Settings (JSON)* and add them there.
+
+Here are the specific keys we added:
 
 ```jsonc
 {
-  // Don't auto-diagnose and re-fix generated code after a turn. Each auto-fix
-  // is another billed request that re-sends the conversation as input tokens.
+  // Automatically diagnosing and fixing code problems after an edit triggers new, 
+  // billed requests that re-send the whole conversation. false = you decide when to fix.
   "github.copilot.chat.agent.autoFix": false,
 
-  // Cap how many tool-call iterations the agent runs per turn (default 25).
-  // A runaway agent can burn a lot of credits before it stops on its own.
+  // One chat turn can fan out into many tool calls. The default is 25. Lowering 
+  // it to 5 forces a runaway agent to stop before racking up high 25-step costs.
   "chat.agent.maxRequests": 5,
 
-  // Compress large terminal output before it's sent to the model, instead of
-  // shipping the entire log as input tokens. (Preview)
+  // Collapses common terminal outputs (like install progress or lockfile noise) 
+  // before sending, shrinking input volume.
   "chat.tools.compressOutput.enabled": true,
 
-  // When the context window fills, summarize the history instead of re-sending
-  // every prior turn verbatim. Keep this on.
+  // When long sessions fill the context window, Copilot summarizes earlier history 
+  // rather than verbatim re-sending it. This keeps costs flatter as a thread grows.
   "github.copilot.chat.summarizeAgentConversationHistory.enabled": true
 }
 ```
 
-### What each setting does
-
-- **`github.copilot.chat.agent.autoFix` → `false`**: By default (`true`), after the agent edits code it will automatically try to diagnose and fix any problems it detects. Each of those passes is another *billed* request that re-sends the whole conversation. Turning it off means you decide when a fix is worth spending on.
-- **`chat.agent.maxRequests` → `5`**: One chat turn can fan out into many tool calls (read file, edit, run terminal, retry…). The default ceiling is **25**. Lowering it forces the agent to stop and check in with you before it racks up 25 billed steps chasing a problem.
-- **`chat.tools.compressOutput.enabled` → `true`**: When the agent runs a command, the full terminal output is normally sent back to the model as input tokens. This (preview) setting collapses unchanged diffs, drops lockfile noise, and strips install progress first — directly shrinking input tokens.
-- **`github.copilot.chat.summarizeAgentConversationHistory.enabled` → `true`**: Long sessions eventually overflow the context window. With this on, Copilot summarizes the earlier history instead of dropping it or re-sending it in full every turn — keeping input cost flatter as a conversation grows.
-
-> **Inline completions are free.** Code completions (ghost text) are *not* billed in AI credits and are already enabled by default for code — no setting needed. Lean on them: they do real work for zero credits and reduce how often you reach for billed chat.
-
-> **Shortcut:** This repo ships these settings in [.vscode/settings.json](.vscode/settings.json), so simply opening the folder in VS Code applies them at the workspace level — no manual editing required. Use the User Settings approach above if you'd rather make the change global to all your projects.
+> **Inline completions are free.** Code completions (ghost text) are *not* billed in AI credits and are already enabled by default. Lean on them: they do real work for zero credits and reduce how often you reach for billed chat.
 
 > Verify your IDE is on the latest version and the Copilot extension is current — older versions can display incorrect model pricing and usage numbers.
 
