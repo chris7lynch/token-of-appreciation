@@ -2,6 +2,9 @@
 
 Welcome to the GitHub Copilot Token Efficiency Lab! This repository is designed for GitHub Copilot Business and Enterprise users to understand how to optimize token consumption under the new usage-based billing model.
 
+> [!WARNING]
+> Running the entire lab as-is can consume a heavy portion of your monthly AI credits. Results may vary, but in testing with Opus 4.8 in June 2026 the multi-chat (raw chat) example alone consumed about 700 AI credits. Check your plan's credit balance before running the full lab.
+
 ## The New Billing Model
 
 GitHub Copilot has shifted to **Usage-Based Billing** utilizing **GitHub AI Credits**. Your usage depends on the specific model selected and the number of tokens consumed.
