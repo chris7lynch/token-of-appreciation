@@ -117,6 +117,7 @@ In the blank app repo:
   - `Create a static html page for this application so that it renders on the / route.`
   - `Ensure that page loads the api endpoints in a pretty format as well.`
   - `I need both light and dark mode support`
+  - `I need to break this up so that my application is properly structured.  My CSS, HTML, JS, and Python should all be independent.  Ensure that my application is following proper coding standards, with my source code in /src and tests in /test`
 5. End when the app is complete.
 
 Then immediately record baseline usage.
@@ -137,6 +138,10 @@ mkdir token-of-appreciation-detailed
 cd token-of-appreciation-detailed
 git init
 mkdir -p .github/prompts
+touch .github/copilot-instructions.md
+touch .github/prompts/build-product-proxy-api.prompt.md
+mkdir -p .vscode
+touch .vscode/settings.json
 code .
 ```
 
