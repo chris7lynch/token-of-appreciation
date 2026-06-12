@@ -16,7 +16,6 @@ Source upstream data from https://fakestoreapi.com/products.
 | ------ | --------------------- | ---------------------------------------------------------------- |
 | GET    | `/`                   | Serves the static landing page (HTML). Hidden from docs.         |
 | GET    | `/products`           | All products from the Fake Store API.                            |
-| GET    | `/products/{id}`      | A single product by id.                                          |
 | GET    | `/highly-rated-items` | Only products with `rating.count > 100` AND `rating.rate > 3.0`. |
 
 ### Route behavior rules
