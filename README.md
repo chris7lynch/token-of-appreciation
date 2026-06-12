@@ -109,7 +109,14 @@ In the blank app repo:
 1. Start a new chat.
 2. Use a powerful model.
 3. Do not create or paste prompt/instruction files yet.
-4. Build the use case through multiple messages, using [.github/copilot-instructions.md](.github/copilot-instructions.md) in your browser as reference.
+4. Build the use case through multiple chat messages.
+  - `Create a Python API. It should return Fake Store API products from https://fakestoreapi.com/products`
+  - `Add a second endpoint called highly-rated-items that returns only products with more than 100 ratings and a higher rating than 3.0.`
+  - `Create tests for those APIs.`
+  - `Ensure there is a swagger endpoint exposed to view my new API information.  It should include property mappings for all upstream API properties.`
+  - `Create a static html page for this application so that it renders on the / route.`
+  - `Ensure that page loads the api endpoints in a pretty format as well.`
+  - `I need both light and dark mode support`
 5. End when the app is complete.
 
 Then immediately record baseline usage.

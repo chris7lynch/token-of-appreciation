@@ -1,6 +1,6 @@
 # Build Product Proxy API (Single Shot)
 
-Generate a complete Python FastAPI application in this repository.
+Generate a complete Python FastAPI application in this repository that proxies the public Fake Store API, serves a styled landing page, and ships with tests.
 
 ## Dependency File
 
@@ -8,27 +8,35 @@ Generate a complete Python FastAPI application in this repository.
 - Ensure the generated app can be installed and run with `pip install -r requirements.txt`.
 - Keep the dependency list minimal and appropriate for FastAPI, runtime HTTP calls, and testing.
 
-## Functional Requirements
+## API Endpoints
 
-1. Build GET /products.
-   - Fetch products from https://fakestoreapi.com/products.
-   - Return all product properties from upstream.
+Source upstream data from https://fakestoreapi.com/products.
 
-2. Build GET /highly-rated-items.
-   - Source data from https://fakestoreapi.com/products.
-   - Return only items where rating.count > 100 and rating.rate > 3.0.
+| Method | Path                  | Description                                                      |
+| ------ | --------------------- | ---------------------------------------------------------------- |
+| GET    | `/`                   | Serves the static landing page (HTML). Hidden from docs.         |
+| GET    | `/products`           | All products from the Fake Store API.                            |
+| GET    | `/products/{id}`      | A single product by id.                                          |
+| GET    | `/highly-rated-items` | Only products with `rating.count > 100` AND `rating.rate > 3.0`. |
 
-3. Ensure Swagger docs are available at /docs.
+### Route behavior rules
 
-4. Preserve the full upstream product shape in the response model.
-   - Do not drop upstream fields.
-   - Model nested rating data explicitly.
-   - Treat the upstream product as an object with these top-level fields at minimum: `id`, `title`, `price`, `description`, `category`, `image`, and `rating`.
-   - Treat `rating` as a nested object with at least `rate` and `count`.
-   - Keep the mapped response aligned with the upstream schema so every upstream field is represented in the API response and documentation.
-   - Preserve any additional upstream fields if they are present.
+- `/` returns a `FileResponse` for `index.html` and is hidden from the OpenAPI docs.
+- Mount static files at `/static`.
+- Map upstream failures explicitly:
+  - upstream non-2xx (`HTTPStatusError`) -> propagate that status code with a clear `detail` message.
+  - network failure (`RequestError`) -> `502` "Unable to reach the Fake Store API."
+- `/products/{id}`: the upstream returns an empty body for unknown IDs. Guard `response.json()` against `ValueError` and return `404` "Product not found."
+- All list endpoints declare a `response_model` so the OpenAPI schema documents every property.
 
-## Example Upstream Response
+## Data Model (maps all upstream fields)
+
+- `Product`: `id`, `title`, `price`, `description`, `category`, `image`, `rating`.
+- `Rating`: `rate`, `count`.
+- Preserve the full upstream product shape — do not drop fields, and model nested rating data explicitly.
+- Keep the mapped response aligned with the upstream schema so every upstream field is represented in the API response and documentation.
+
+### Example upstream response
 
 The upstream `/products` endpoint returns an array of product objects shaped like this:
 
@@ -61,31 +69,46 @@ The upstream `/products` endpoint returns an array of product objects shaped lik
 ]
 ```
 
-5. Add proper error handling for upstream request failures.
-   - Return meaningful HTTP status codes.
-   - Fail cleanly if the upstream API is unavailable or returns an error.
+## Swagger / OpenAPI
 
-## Testing Requirements
+- `/docs` serves the Swagger UI and `/openapi.json` serves the raw schema.
+- Every `Product` and `Rating` property is documented with a description and example.
 
-1. Create tests for the API behavior in this prompt.
-2. Use `pytest`.
-3. Mock outbound HTTP requests so tests run offline.
-4. Cover:
-   - success responses for both endpoints
-   - filtering behavior for highly-rated items
-   - upstream failure handling
-   - OpenAPI/Swagger availability or schema shape where practical
+## Front-End Behavior
 
-## Implementation Expectations
+### Landing page (`index.html`)
 
-- Use Python 3.11+ and FastAPI.
-- Use explicit response models and keep them aligned with the upstream API.
-- Create or update `requirements.txt` in the repository root and make sure the application uses it.
-- Keep the implementation simple and beginner-friendly.
-- Use clear module boundaries and readable naming.
+- A header with the title, a theme-toggle button, and endpoint summary cards.
+- A "Live Products" section with two toggle buttons (All products / Highly rated), a status line, and an empty grid that JS fills.
+- A footer.
 
-## Output Expectations
+### Theming behavior
 
-- Create the application files needed for the solution.
-- Prioritize executable code over explanation but ensure it is well documented and readable.
-- Do not make assumptions; ask for clarifications if needed before generating code.
+- The default theme is dark.
+- Resolve the active theme in this priority order:
+  1. The user's explicit choice saved in `localStorage.theme`.
+  2. The OS preference via `prefers-color-scheme` when the user has not chosen.
+- The toggle button flips `data-theme`, persists the choice to `localStorage`, and updates the icon/label.
+- Listen to `prefers-color-scheme` changes only when the user has not made an explicit choice.
+- Light mode uses a darker accent (`#0284c7`) for contrast; dark mode uses `#38bdf8`.
+- Use a responsive product grid (`repeat(auto-fit, minmax(240px, 1fr))`) with smooth background and color transitions.
+
+### Product loading behavior
+
+- `loadProducts(endpoint)` fetches the selected endpoint, surfaces non-OK responses and network errors into the status line, and renders product cards.
+- Each card shows the image, category, title, price formatted to 2 decimals, and a star rating with count.
+- The toggle buttons switch the active endpoint; load `/products` on start.
+
+## Test Coverage
+
+- `/` returns HTML containing the title.
+- `/products`: success; upstream 500 -> 500; network error -> 502.
+- `/highly-rated-items`: correct filtering (only `count > 100` AND `rate > 3.0`); upstream error propagates.
+
+## Acceptance Criteria
+
+- All endpoints behave per the rules above and the tests pass.
+- `/docs` shows every `Product`/`Rating` property with descriptions.
+- The landing page renders the live product grid and toggles between All and Highly rated.
+- Light and dark modes both work, follow the OS by default, and persist the user's explicit choice.
+- HTML, CSS, JS, and Python are each in separate files; source in `src/`, tests in `test/`.
