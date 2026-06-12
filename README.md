@@ -75,63 +75,65 @@ The single biggest lever on input tokens is **what you put in the context window
 
 ---
 
-## Module 2: Model Choices and Associated Costs
+## Module 2: The "Random Chatting" Approach (Inefficient)
+
+We will build a **Product Proxy** API twice and compare the AI credit cost. The app wraps the free, public [Fake Store API](https://fakestoreapi.com/) (`https://fakestoreapi.com`), which is stable and repeatable for demos:
+
+- `GET /products` → proxies `https://fakestoreapi.com/products` and returns the list of products.
+- `GET /highly-rated-items` → fetches products from the Fake Store API and returns only items with more than 100 ratings and a rating higher than 3.0.
+- Exposes a Swagger endpoint to view the API information.
+- Includes simple tests for these APIs.
+
+> **Before you start:** Open the Copilot **usage / AI credits view** (or your org's usage dashboard) and note your current credit total. You'll check it again after this run.
+
+*Stay on the `main` branch. Use a **Powerful** model. Send these as separate messages, accepting each result before the next.*
+
+1. `Create a Python API. I won't specify the framework right now, but I want to return Fake Store API products.`
+2. `Add a second endpoint called highly-rated-items that returns only products with more than 100 ratings and a higher rating than 3.0.`
+3. `Let's have a simple chat to create tests for those APIs.`
+4. `Finally, I want to ensure there is a swagger endpoint exposed to view my new API information.`
+
+**Record your AI credit total now.** Note how each turn re-sent the growing conversation as input, and several replies included long explanations (output).
+
+---
+
+## Module 3: The "Solid Prompt" Approach & Model Comparison
+
+Now let's see how much we can save when we provide Copilot with detailed instructions and compare models.
+
+**Lab Action:** Swap to the `detailed-prompts` branch.
+
+```bash
+git checkout detailed-prompts
+```
+
+On this branch, you will find a `.github/copilot-instructions.md` file that sets the baseline context, and a dedicated prompt file that removes ambiguity.
+
+### Model Choices and Associated Costs
 
 Not all models are created equal. Copilot lets you swap your model from the dropdown in the chat input box. Reference the live [Models and pricing](https://docs.github.com/en/enterprise-cloud@latest/copilot/reference/copilot-billing/models-and-pricing) table for current per-token rates.
 
 * **Lightweight Models:** Fast and use significantly fewer AI credits per token. Great for boilerplate, scaffolding, regex, and well-specified tasks.
 * **Powerful Models:** Cost more AI credits per token but excel at ambiguous problems, deep refactoring, and subtle bugs.
 
-**Lab Action:** Open the model dropdown, look at the pricing shown per model, and switch to a **Lightweight** model. You'll use it in Module 3 to prove that a well-specified task does not need a frontier model.
+**Lab Action:** Open the model dropdown, look at the pricing shown per model, and switch to a **Lightweight** model. You will use it for Run 2 to prove that a well-specified task does not need a frontier model.
 
----
+### Run 2 — The Efficient Run
 
-## Module 3: Same App, Two Approaches (The Challenge)
+Start a **New Chat**, ensure you are using the **Lightweight** model, and use the prompt file provided on the `detailed-prompts` branch to generate the entire application at once. 
 
-We will build the **"Token of Appreciation"** API twice and compare the AI credit cost. The app wraps the free, public [Fake Store API](https://fakestoreapi.com/) (`https://fakestoreapi.com`), which is stable and repeatable for demos:
-
-- `GET /users` → proxies `https://fakestoreapi.com/users` and returns the list of users.
-- `POST /appreciation` → accepts a `user_id` and a `message`, looks the user up in the Fake Store API, and returns a confirmation payload.
-
-> **Before you start:** Open the Copilot **usage / AI credits view** (or your org's usage dashboard) and note your current credit total. You'll check it again after each run.
-
-### Run 1 — The "Random Chatting" Approach (inefficient)
-*Stay on the `main` branch. Use a **Powerful** model. Send these as separate messages, accepting each result before the next.*
-
-1. `Create a Python web API.`
-2. `Make it return a list of users.`
-3. `Actually use FastAPI so I get Swagger docs.`
-4. `The users should come from an external API, not hardcoded.`
-5. `Use the Fake Store API for that.`
-6. `Now add a route so I can send someone an appreciation message.`
-7. `It should validate the input. Can you also explain how it all works?`
-
-**Record your AI credit total now.** Note how each turn re-sent the growing conversation as input, and several replies included long explanations (output).
-
-### Run 2 — The "Solid Prompt" Approach (efficient)
-*Stay on `main` for this comparison run. Switch the model dropdown to a **Lightweight** model. Send this as a single message:*
-
-> Build a single-file Python FastAPI app named `main.py`.
-> Requirements:
-> - `GET /users`: fetch `https://fakestoreapi.com/users` with `httpx` and return the JSON list as-is.
-> - `POST /appreciation`: accept a JSON body with `user_id: int` and `message: str` validated by a Pydantic `BaseModel`. Fetch `https://fakestoreapi.com/users/{user_id}`; if found, return `{ "to": "<firstname lastname>", "message": message, "status": "delivered" }`; if the upstream returns empty/404, return HTTP 404.
-> - Use `async` route handlers and a module-level `httpx.AsyncClient`.
-> - Include a `requirements.txt` listing `fastapi`, `uvicorn`, and `httpx`.
-> Output only the code for `main.py` and `requirements.txt` in separate fenced blocks. Do not explain the code.
-
-**Record your AI credit total again.** The detailed prompt removes ambiguity so the **Lightweight** model produces the same working app the Powerful model did — for a fraction of the credits.
+**Record your AI credit total again.** The detailed instructions and solid prompt remove ambiguity so the **Lightweight** model produces the exact same working app the Powerful model did — for a fraction of the credits.
 
 ### Compare the Results
 
 Put the two outcomes side by side:
 
 1. **AI credits spent** — Run 1 (multi-turn, Powerful) vs. Run 2 (single-shot, Lightweight). This is the headline number for the talk.
-2. **The generated code** — Diff the two `main.py` files. They should be functionally equivalent: same two routes, same Fake Store API calls, same Pydantic validation. The point: precise requirements, not a bigger model, are what guarantee the result.
+2. **The generated code** — Diff the generated files. They should be functionally equivalent: same two routes, same Fake Store API calls, same filtering logic. The point: precise requirements, not a bigger model, are what guarantee the result.
 3. **Run it to prove parity** — for either version:
    ```bash
    pip install -r requirements.txt
    uvicorn main:app --reload
    ```
-   Open `http://127.0.0.1:8000/docs`, call `GET /users`, then `POST /appreciation` with a body like `{ "user_id": 1, "message": "Thanks for the great work!" }`.
-
-> **Note:** This `main` branch contains lab instructions only — no source code. The fully built, efficient version lives on the `efficient-prompts` branch, which also adds a `.github/copilot-instructions.md` so the whole team gets these savings automatically. We'll create that branch later in the session.
+   Open `http://127.0.0.1:8000/docs`, call `GET /products`, then `GET /highly-rated-items`.
+   You can also run the tests using `pytest`.
