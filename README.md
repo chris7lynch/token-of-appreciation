@@ -2,7 +2,7 @@
 
 Welcome to the GitHub Copilot Token Efficiency Lab! This repository is designed for GitHub Copilot Business and Enterprise users to understand how to optimize token consumption under the new usage-based billing model.
 
-## 💡 The New Billing Model
+## The New Billing Model
 
 GitHub Copilot has shifted to **Usage-Based Billing** utilizing **GitHub AI Credits**. Your usage depends on the specific model selected and the number of tokens consumed.
 
@@ -26,7 +26,7 @@ You are billed per token, but not all tokens are priced the same. Every interact
 
 ---
 
-## ⚙️ Module 1: IDE Setup & Optimizations
+## Module 1: IDE Setup & Optimizations
 
 Before the demo, adjust these VS Code settings so Copilot stops spending tokens on your behalf. Open **Settings (JSON)** with `Cmd+Shift+P` → *Preferences: Open User Settings (JSON)* and add the following:
 
@@ -75,7 +75,7 @@ The single biggest lever on input tokens is **what you put in the context window
 
 ---
 
-## 🧠 Module 2: Model Choices and Associated Costs
+## Module 2: Model Choices and Associated Costs
 
 Not all models are created equal. Copilot lets you swap your model from the dropdown in the chat input box. Reference the live [Models and pricing](https://docs.github.com/en/enterprise-cloud@latest/copilot/reference/copilot-billing/models-and-pricing) table for current per-token rates.
 
@@ -86,7 +86,7 @@ Not all models are created equal. Copilot lets you swap your model from the drop
 
 ---
 
-## 🚀 Module 3: Same App, Two Approaches (The Challenge)
+## Module 3: Same App, Two Approaches (The Challenge)
 
 We will build the **"Token of Appreciation"** API twice and compare the AI credit cost. The app wraps the free, public [Fake Store API](https://fakestoreapi.com/) (`https://fakestoreapi.com`), which is stable and repeatable for demos:
 
@@ -106,7 +106,7 @@ We will build the **"Token of Appreciation"** API twice and compare the AI credi
 6. `Now add a route so I can send someone an appreciation message.`
 7. `It should validate the input. Can you also explain how it all works?`
 
-➡️ **Record your AI credit total now.** Note how each turn re-sent the growing conversation as input, and several replies included long explanations (output).
+**Record your AI credit total now.** Note how each turn re-sent the growing conversation as input, and several replies included long explanations (output).
 
 ### Run 2 — The "Solid Prompt" Approach (efficient)
 *Stay on `main` for this comparison run. Switch the model dropdown to a **Lightweight** model. Send this as a single message:*
@@ -119,9 +119,9 @@ We will build the **"Token of Appreciation"** API twice and compare the AI credi
 > - Include a `requirements.txt` listing `fastapi`, `uvicorn`, and `httpx`.
 > Output only the code for `main.py` and `requirements.txt` in separate fenced blocks. Do not explain the code.
 
-➡️ **Record your AI credit total again.** The detailed prompt removes ambiguity so the **Lightweight** model produces the same working app the Powerful model did — for a fraction of the credits.
+**Record your AI credit total again.** The detailed prompt removes ambiguity so the **Lightweight** model produces the same working app the Powerful model did — for a fraction of the credits.
 
-### 📊 Compare the Results
+### Compare the Results
 
 Put the two outcomes side by side:
 
